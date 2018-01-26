@@ -7,7 +7,7 @@ services:
       - .:/mathemacode/
     ports:
       - "8000:8000"
-    depends_on:ui
+    depends_on:
       - mathemadb
   mathemadb:
     image: postgres
