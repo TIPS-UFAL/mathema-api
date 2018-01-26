@@ -1,0 +1,13 @@
+version: '3'
+services:
+  mathemaweb:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/mathemacode/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mathemadb
+  mathemadb:
+    image: postgres
