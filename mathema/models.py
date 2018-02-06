@@ -15,47 +15,37 @@ class User(AbstractUser):
 
 
 class Curriculum(models.Model):
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300)
-    data_criacao = models.DateTimeField(default=timezone.now)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=300)
+    creation_data = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
-class Objetivo(models.Model):
+class Objective(models.Model):
     curriculum = models.ForeignKey(Curriculum)
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300, null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=300, null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
-class TipoSuporte(models.Model):
-    nome = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nome
-
-
-class Suporte(models.Model):
-    titulo = models.CharField(max_length=100)
-    tipo = models.ForeignKey(TipoSuporte)
-    arquivo = models.FileField(upload_to='suporte', null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+class ActivityType(models.Model):
+    title = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
-class Atividade(models.Model):
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300, null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+class Activity(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    type = models.ForeignKey(ActivityType, null=True)
 
     def __str__(self):
         return self.title
@@ -63,40 +53,50 @@ class Atividade(models.Model):
 
 class Answer(models.Model):
     answer = models.TextField()
-    activity = models.ForeignKey(Atividade)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    activity = models.ForeignKey(Activity)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    evaluation = models.IntegerField(default=0)
 
     def __str__(self):
-        return 'Questão: '+str(self.activity)+' Proprietario: '+str(self.owner)
+        return 'Question: '+str(self.activity)+' Proprietario: '+str(self.owner)
 
 
-class Topico(models.Model):
-    objetivo = models.ForeignKey(Objetivo)
-    topicoPai = models.ForeignKey('self', null=True, blank=True)
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300, null=True, blank=True)
-    suportes = models.ManyToManyField(Suporte, through='TopicoSuporte', null=True, blank=True)
-    atividades = models.ManyToManyField(Atividade, through='TopicoAtividade', null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+class Suport(models.Model):
+    title = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    content = models.TextField(default='Dica')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
-class TopicoAtividade(models.Model):
-    topico = models.ForeignKey(Topico)
-    atividade = models.ForeignKey(Atividade)
-
-    def __str__(self):
-        return self.topico.titulo + " possui " + self.atividade.titulo
-
-
-class TopicoSuporte(models.Model):
-    topico = models.ForeignKey(Topico)
-    suporte = models.ForeignKey(Suporte)
+class Topic(models.Model):
+    parent_topic = models.ForeignKey('self', null=True, blank=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    supports = models.ManyToManyField(Suport, through='TopicSuport', null=True, blank=True)
+    activities = models.ManyToManyField(Activity, through='TopicActivity', null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return self.topico.titulo + " possui " + self.suporte.titulo + " (" + self.suporte.tipo + ") "
+        return self.title
+
+
+class TopicActivity(models.Model):
+    topic = models.ForeignKey(Topic)
+    activity = models.ForeignKey(Activity, null=True)
+
+    def __str__(self):
+        return self.topic.title + " possui " + self.activity.title
+
+
+class TopicSuport(models.Model):
+    topic = models.ForeignKey(Topic)
+    support = models.ForeignKey(Suport, null=True)
+
+    def __str__(self):
+        return self.topic.title + " possui " + self.support.title + " (" + self.support.type + ") "
 
 
 

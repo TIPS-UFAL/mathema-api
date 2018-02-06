@@ -1,12 +1,17 @@
 from django.conf import settings
 from rest_framework import serializers
-from .models import Atividade, TopicoAtividade, TopicoSuporte, Topico, TipoSuporte, \
-    Suporte, Objetivo, Curriculum, Answer
+from .models import Activity, TopicActivity, TopicSuport, Topic, \
+    Suport, Objective, Curriculum, Answer, ActivityType
 
 
-class AtividadeSerializer(serializers.ModelSerializer):
+class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Atividade
+        model = Activity
+        fields = '__all__'
+
+class ActivityTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityType
         fields = '__all__'
 
 
@@ -16,39 +21,34 @@ class AnswerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TopicoSerializer(serializers.ModelSerializer):
+class TopicSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Topico
+        model = Topic
         fields = '__all__'
 
 
-class TopicoAtividadeSerializer(serializers.ModelSerializer):
+class TopicActivitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = TopicoAtividade
+        model = TopicActivity
         fields = '__all__'
 
 
-class TopicoSuporteSerializer(serializers.ModelSerializer):
+class TopicSuportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TopicoSuporte
+        model = TopicSuport
         fields = '__all__'
 
 
-class TipoSuporteSerializer(serializers.ModelSerializer):
+
+class SuportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TipoSuporte
+        model = Suport
         fields = '__all__'
 
 
-class SuporteSerializer(serializers.ModelSerializer):
+class ObjectiveSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Suporte
-        fields = '__all__'
-
-
-class ObjetivoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Objetivo
+        model = Objective
         fields = '__all__'
 
 

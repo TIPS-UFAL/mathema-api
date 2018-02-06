@@ -23,14 +23,15 @@ from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token
 
 router = DefaultRouter()
 router.register(r'api/curriculum', views.Curriculum)
-router.register(r'api/support', views.Suporte)
-router.register(r'api/activity', views.Atividade)
+router.register(r'api/support', views.Suport)
+router.register(r'api/activity', views.Activity)
+router.register(r'api/activityType', views.ActivityType)
 router.register(r'api/answer', views.Answer)
-router.register(r'api/topic', views.Topico)
-router.register(r'api/objective', views.Objetivo)
-router.register(r'api/supportType', views.TipoSuporte)
-router.register(r'api/activityTopic', views.TopicoAtividade)
-router.register(r'api/supportTopic', views.TopicoSuporte)
+router.register(r'api/topic', views.Topic)
+router.register(r'api/objective', views.Objective)
+router.register(r'api/activityTopic', views.TopicActivity)
+router.register(r'api/supportTopic', views.TopicSuport)
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(router.urls)),

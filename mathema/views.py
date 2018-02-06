@@ -39,9 +39,9 @@ class Curriculum(FiltersMixin, viewsets.ModelViewSet):
     Retrieve, update or delete a support instance.
     # api/support/:id/
 """
-class Suporte(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Suporte.objects.all().order_by('-id')
-    serializer_class = SuporteSerializer
+class Suport(FiltersMixin, viewsets.ModelViewSet):
+    queryset = Suport.objects.all().order_by('-id')
+    serializer_class = SuportSerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
@@ -50,19 +50,36 @@ class Suporte(FiltersMixin, viewsets.ModelViewSet):
 
 
 """
-    List all Atividade, or create a new Atividade.
+    List all Activity, or create a new Activity.
     # api/activity/
-    Retrieve, update or delete a Atividade instance.
+    Retrieve, update or delete a Activity instance.
     # api/activity/:id/
 """
-class Atividade(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Atividade.objects.all().order_by('-id')
-    serializer_class = AtividadeSerializer
+class Activity(FiltersMixin, viewsets.ModelViewSet):
+    queryset = Activity.objects.all().order_by('-id')
+    serializer_class = ActivitySerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
 #         'title': 'titulo',
 #     }
+
+
+"""
+    List all Activity, or create a new Activity.
+    # api/activity/
+    Retrieve, update or delete a Activity instance.
+    # api/activity/:id/
+"""
+class ActivityType(FiltersMixin, viewsets.ModelViewSet):
+    queryset = ActivityType.objects.all().order_by('-id')
+    serializer_class = ActivityTypeSerializer
+#     filter_backends = (filters.SearchFilter,)
+#     search_fields = ('titulo',)
+#     filter_mappings = {
+#         'title': 'titulo',
+#     }
+
 
 
 """
@@ -77,14 +94,14 @@ class Answer(viewsets.ModelViewSet):
 
 
 """
-    List all Topico, or create a new Topico.
+    List all Topic, or create a new Topic.
     # api/topic/
-    Retrieve, update or delete a Topico instance.
+    Retrieve, update or delete a Topic instance.
     # api/topic/:id/
 """
-class Topico(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Topico.objects.all().order_by('-id')
-    serializer_class = TopicoSerializer
+class Topic(FiltersMixin, viewsets.ModelViewSet):
+    queryset = Topic.objects.all().order_by('-id')
+    serializer_class = TopicSerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
@@ -93,14 +110,14 @@ class Topico(FiltersMixin, viewsets.ModelViewSet):
 
 
 """
-    List all Objetivo, or create a new Objetivo.
+    List all Objective, or create a new Objective.
     # api/objective/
-    Retrieve, update or delete a Objetivo instance.
+    Retrieve, update or delete a Objective instance.
     # api/objective/:id/
 """
-class Objetivo(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Objetivo.objects.all().order_by('-id')
-    serializer_class = ObjetivoSerializer
+class Objective(FiltersMixin, viewsets.ModelViewSet):
+    queryset = Objective.objects.all().order_by('-id')
+    serializer_class = ObjectiveSerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
@@ -108,31 +125,16 @@ class Objetivo(FiltersMixin, viewsets.ModelViewSet):
 #     }
 
 
-"""
-    List all TipoSuporte, or create a new TipoSuporte.
-    # api/supportType/
-    Retrieve, update or delete a TipoSuporte instance.
-    # api/supportType/:id/
-"""
-class TipoSuporte(FiltersMixin, viewsets.ModelViewSet):
-    queryset = TipoSuporte.objects.all().order_by('-id')
-    serializer_class = TipoSuporteSerializer
-#     filter_backends = (filters.SearchFilter,)
-#     search_fields = ('titulo',)
-#     filter_mappings = {
-#         'title': 'titulo',
-#     }
-
 
 """
-    List all TopicoAtividade, or create a new TopicoAtividade.
+    List all TopicActivity, or create a new TopicActivity.
     # api/activityTopic/
-    Retrieve, update or delete a TopicoAtividade instance.
+    Retrieve, update or delete a TopicActivity instance.
     # api/activityTopic/:id/
 """
-class TopicoAtividade(FiltersMixin, viewsets.ModelViewSet):
-    queryset = TopicoAtividade.objects.all().order_by('-id')
-    serializer_class = TopicoAtividadeSerializer
+class TopicActivity(FiltersMixin, viewsets.ModelViewSet):
+    queryset = TopicActivity.objects.all().order_by('-id')
+    serializer_class = TopicActivitySerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
@@ -141,14 +143,14 @@ class TopicoAtividade(FiltersMixin, viewsets.ModelViewSet):
 
 
 """
-    List all TopicoSuporte, or create a new TopicoSuporte.
+    List all TopicSuport, or create a new TopicSuport.
     # api/supportTopic/
-    Retrieve, update or delete a TopicoSuporte instance.
+    Retrieve, update or delete a TopicSuport instance.
     # api/supportTopic/:id/
 """
-class TopicoSuporte(FiltersMixin, viewsets.ModelViewSet):
-    queryset = TopicoSuporte.objects.all().order_by('-id')
-    serializer_class = TopicoSuporteSerializer
+class TopicSuport(FiltersMixin, viewsets.ModelViewSet):
+    queryset = TopicSuport.objects.all().order_by('-id')
+    serializer_class = TopicSuportSerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
