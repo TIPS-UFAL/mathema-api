@@ -41,11 +41,33 @@ class ActivityType(models.Model):
         return self.title
 
 
+class Topic(models.Model):
+    parent_topic = models.ForeignKey('self', null=True, blank=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.title
+
+
 class Activity(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
     type = models.ForeignKey(ActivityType, null=True)
+    topics = models.ManyToManyField(Topic, through='TopicActivity', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Suport(models.Model):
+    title = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    content = models.TextField(default='Dica')
+    topics = models.ManyToManyField(Topic, through='TopicSuport', blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
         return self.title
@@ -60,29 +82,7 @@ class Answer(models.Model):
     def __str__(self):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.owner)
 
-
-class Suport(models.Model):
-    title = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
-    content = models.TextField(default='Dica')
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-    def __str__(self):
-        return self.title
-
-
-class Topic(models.Model):
-    parent_topic = models.ForeignKey('self', null=True, blank=True)
-    title = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    supports = models.ManyToManyField(Suport, through='TopicSuport', null=True, blank=True)
-    activities = models.ManyToManyField(Activity, through='TopicActivity', null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-    def __str__(self):
-        return self.title
-
-
+    
 class TopicActivity(models.Model):
     topic = models.ForeignKey(Topic)
     activity = models.ForeignKey(Activity, null=True)
@@ -93,7 +93,7 @@ class TopicActivity(models.Model):
 
 class TopicSuport(models.Model):
     topic = models.ForeignKey(Topic)
-    support = models.ForeignKey(Suport, null=True)
+    support = models.ForeignKey(Suport)
 
     def __str__(self):
         return self.topic.title + " possui " + self.support.title + " (" + self.support.type + ") "
