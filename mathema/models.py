@@ -16,7 +16,7 @@ class User(AbstractUser):
 
 class Curriculum(models.Model):
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=300)
+    description = models.TextField()
     creation_data = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
@@ -34,18 +34,18 @@ class Objective(models.Model):
         return self.title
 
 
-class ActivityType(models.Model):
-    title = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.title
-
-
 class Topic(models.Model):
     parent_topic = models.ForeignKey('self', null=True, blank=True)
     title = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.title
+
+
+class ActivityType(models.Model):
+    title = models.CharField(max_length=100)
 
     def __str__(self):
         return self.title
@@ -60,6 +60,13 @@ class Activity(models.Model):
 
     def __str__(self):
         return self.title
+
+class TopicActivity(models.Model):
+    topic = models.ForeignKey(Topic)
+    activity = models.ForeignKey(Activity, null=True)
+
+    def __str__(self):
+        return self.topic.title + " possui " + self.activity.title
 
 
 class Suport(models.Model):
@@ -82,13 +89,8 @@ class Answer(models.Model):
     def __str__(self):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.owner)
 
-    
-class TopicActivity(models.Model):
-    topic = models.ForeignKey(Topic)
-    activity = models.ForeignKey(Activity, null=True)
 
-    def __str__(self):
-        return self.topic.title + " possui " + self.activity.title
+
 
 
 class TopicSuport(models.Model):
