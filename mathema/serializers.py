@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
-from .models import Activity, TopicActivity, TopicSuport, Topic, \
-    Suport, Objective, Curriculum, Answer, ActivityType
+from .models import Activity, TopicActivity, TopicSupport, Topic, \
+    Support, Objective, Curriculum, Answer, ActivityType
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -33,16 +33,16 @@ class TopicActivitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TopicSuportSerializer(serializers.ModelSerializer):
+class TopicSupportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TopicSuport
+        model = TopicSupport
         fields = '__all__'
 
 
 
-class SuportSerializer(serializers.ModelSerializer):
+class SupportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Suport
+        model = Support
         fields = '__all__'
 
 

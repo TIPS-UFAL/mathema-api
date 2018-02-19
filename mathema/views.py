@@ -5,6 +5,8 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
+
+from mathema import permissions
 from .models import *
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
@@ -39,9 +41,9 @@ class Curriculum(FiltersMixin, viewsets.ModelViewSet):
     Retrieve, update or delete a support instance.
     # api/support/:id/
 """
-class Suport(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Suport.objects.all().order_by('-id')
-    serializer_class = SuportSerializer
+class Support(FiltersMixin, viewsets.ModelViewSet):
+    queryset = Support.objects.all().order_by('-id')
+    serializer_class = SupportSerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
@@ -81,7 +83,6 @@ class ActivityType(FiltersMixin, viewsets.ModelViewSet):
 #     }
 
 
-
 """
     List all Answers, or create a new Answer.
     # api/answer/
@@ -89,6 +90,7 @@ class ActivityType(FiltersMixin, viewsets.ModelViewSet):
     # api/answer/:id/
 """
 class Answer(viewsets.ModelViewSet):
+    # permission_classes = permissions.IsStudent
     queryset = Answer.objects.all().order_by('-id')
     serializer_class = AnswerSerializer
 
@@ -125,7 +127,6 @@ class Objective(FiltersMixin, viewsets.ModelViewSet):
 #     }
 
 
-
 """
     List all TopicActivity, or create a new TopicActivity.
     # api/activityTopic/
@@ -148,9 +149,9 @@ class TopicActivity(FiltersMixin, viewsets.ModelViewSet):
     Retrieve, update or delete a TopicSuport instance.
     # api/supportTopic/:id/
 """
-class TopicSuport(FiltersMixin, viewsets.ModelViewSet):
-    queryset = TopicSuport.objects.all().order_by('-id')
-    serializer_class = TopicSuportSerializer
+class TopicSupport(FiltersMixin, viewsets.ModelViewSet):
+    queryset = TopicSupport.objects.all().order_by('-id')
+    serializer_class = TopicSupportSerializer
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {

@@ -69,11 +69,11 @@ class TopicActivity(models.Model):
         return self.topic.title + " possui " + self.activity.title
 
 
-class Suport(models.Model):
+class Support(models.Model):
     title = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     content = models.TextField(default='Dica')
-    topics = models.ManyToManyField(Topic, through='TopicSuport', blank=True)
+    topics = models.ManyToManyField(Topic, through='TopicSupport', blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
@@ -90,12 +90,9 @@ class Answer(models.Model):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.owner)
 
 
-
-
-
-class TopicSuport(models.Model):
+class TopicSupport(models.Model):
     topic = models.ForeignKey(Topic)
-    support = models.ForeignKey(Suport)
+    support = models.ForeignKey(Support, default=0)
 
     def __str__(self):
         return self.topic.title + " possui " + self.support.title + " (" + self.support.type + ") "
