@@ -87,7 +87,7 @@ class Answer(models.Model):
     evaluation = models.IntegerField(default=0)
 
     def __str__(self):
-        return 'Question: '+str(self.activity)+' Proprietario: '+str(self.owner)
+        return 'Question: '+str(self.activity)+' Proprietario: '+str(self.author)
 
 
 class TopicSupport(models.Model):

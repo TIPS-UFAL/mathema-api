@@ -6,12 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 
-from mathema import permissions
 from .models import *
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
-# from rest_framework import permissions
-
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 """
     APIREST
@@ -90,7 +88,8 @@ class ActivityType(FiltersMixin, viewsets.ModelViewSet):
     # api/answer/:id/
 """
 class Answer(viewsets.ModelViewSet):
-    # permission_classes = permissions.IsStudent
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
     queryset = Answer.objects.all().order_by('-id')
     serializer_class = AnswerSerializer
 

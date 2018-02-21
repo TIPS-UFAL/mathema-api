@@ -15,11 +15,3 @@ class IsTeacherOrReadOnly(permissions.BasePermission):
         # Write permissions are only allowed to a teacher.
         return request.user.user_type == 2
 
-
-class IsStudent(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return True
-
-
