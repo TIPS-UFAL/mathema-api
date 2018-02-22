@@ -14,14 +14,33 @@ class User(AbstractUser):
                                                  default=1)
 
 
+class Topic(models.Model):
+    parent_topic = models.ForeignKey('self', null=True, blank=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.title
+
+
 class Curriculum(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     creation_data = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    topics = models.ManyToManyField(Topic, through='TopicCurriculum', null=True, blank=True)
 
     def __str__(self):
         return self.title
+
+
+class TopicCurriculum(models.Model):
+    topic = models.ForeignKey(Topic)
+    curriculum = models.ForeignKey(Curriculum)
+
+    def __str__(self):
+        return "Relação entre: " + self.topic.title + " e " + self.curriculum.title
 
 
 class Objective(models.Model):
@@ -34,21 +53,17 @@ class Objective(models.Model):
         return self.title
 
 
-class Topic(models.Model):
-    parent_topic = models.ForeignKey('self', null=True, blank=True)
-    title = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-    def __str__(self):
-        return self.title
-
-
 class ActivityType(models.Model):
-    title = models.CharField(max_length=100)
+    ACTIVITY_TYPE_CHOICES = (
+        (1, 'problemas'),
+        (2, 'multipla escolha'),
+    )
+
+    activity_type = models.PositiveSmallIntegerField(choices=ACTIVITY_TYPE_CHOICES,
+                                                     default=1)
 
     def __str__(self):
-        return self.title
+        return self.activity_type
 
 
 class Activity(models.Model):
@@ -61,12 +76,13 @@ class Activity(models.Model):
     def __str__(self):
         return self.title
 
+
 class TopicActivity(models.Model):
     topic = models.ForeignKey(Topic)
-    activity = models.ForeignKey(Activity, null=True)
+    activity = models.ForeignKey(Activity, default=0)
 
     def __str__(self):
-        return self.topic.title + " possui " + self.activity.title
+        return "Relação entre: " + self.topic.title + " e " + self.activity.title
 
 
 class Support(models.Model):
@@ -80,6 +96,14 @@ class Support(models.Model):
         return self.title
 
 
+class TopicSupport(models.Model):
+    topic = models.ForeignKey(Topic)
+    support = models.ForeignKey(Support)
+
+    def __str__(self):
+        return "Relação entre: " + self.topic.title + " e " + self.support.title + " (" + self.support.type + ") "
+
+
 class Answer(models.Model):
     answer = models.TextField()
     activity = models.ForeignKey(Activity)
@@ -90,12 +114,7 @@ class Answer(models.Model):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.author)
 
 
-class TopicSupport(models.Model):
-    topic = models.ForeignKey(Topic)
-    support = models.ForeignKey(Support, default=0)
 
-    def __str__(self):
-        return self.topic.title + " possui " + self.support.title + " (" + self.support.type + ") "
 
 
 

@@ -15,22 +15,22 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from rest_framework.urlpatterns import format_suffix_patterns
-from rest_framework.routers import DefaultRouter
 
 from mathema import views
 from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token
+from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'api/curriculum', views.Curriculum)
-router.register(r'api/support', views.Support)
-router.register(r'api/activity', views.Activity)
-router.register(r'api/activityType', views.ActivityType)
-router.register(r'api/answer', views.Answer)
 router.register(r'api/topic', views.Topic)
-router.register(r'api/objective', views.Objective)
-router.register(r'api/activityTopic', views.TopicActivity)
-router.register(r'api/topicSupport', views.TopicSupport)
+router.register(r'api/curriculum', views.Curriculum)
+router.register(r'api/topicCurriculum', views.TopicCurriculum)  # Relacao many-to-many (Topic - Curriculum)
+# router.register(r'api/objective', views.Objective)  # Nao esta sendo implementada ainda
+router.register(r'api/activityType', views.ActivityType)
+router.register(r'api/activity', views.Activity)
+router.register(r'api/topicActivity', views.TopicActivity)  # Relacao many-to-many (Topic - Activity)
+router.register(r'api/support', views.Support)
+router.register(r'api/topicSupport', views.TopicSupport)  # Relacao many-to-many (Topic - Support)
+router.register(r'api/answer', views.Answer)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
