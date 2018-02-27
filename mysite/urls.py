@@ -34,6 +34,7 @@ router.register(r'api/answer', views.Answer)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'api/user/(?P<pk>[0-9]+)/$', views.UserNamePerPK.as_view({'get': 'retrieve'})),
     url(r'^', include(router.urls)),
     # Session Authentication
     url(r'^api/rest-auth/', include('rest_auth.urls')),

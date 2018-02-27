@@ -72,3 +72,9 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = '__all__'
+
+
+class UserNamePerPKSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ('username',)

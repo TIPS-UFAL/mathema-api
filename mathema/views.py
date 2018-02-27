@@ -1,5 +1,5 @@
 #from django.shortcuts import render #padrao
-#from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 #from django.db.migrations import serializer
 from django.http import Http404
 from rest_framework.views import APIView
@@ -9,7 +9,7 @@ from rest_framework import status, viewsets, filters
 from .models import *
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 """
     APIREST
@@ -174,3 +174,17 @@ class Answer(viewsets.ModelViewSet):
 
     queryset = Answer.objects.all().order_by('-id')
     serializer_class = AnswerSerializer
+
+
+"""
+    Retrieve a user instance
+    # api/user/:pk/
+"""
+class UserNamePerPK(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated, )
+
+    def retrieve(selfself, request, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserNamePerPKSerializer(user)
+        return Response(serializer.data)
