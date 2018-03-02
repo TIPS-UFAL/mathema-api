@@ -53,6 +53,7 @@ class Group(models.Model):
     def __str__(self):
         return self.title
 
+
 class StudentGroup(models.Model):
     student = models.ForeignKey(User)
     group = models.ForeignKey(Group )
