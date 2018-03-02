@@ -1,10 +1,12 @@
 from django.contrib import admin
 
 from .models import Curriculum, Objective, Support, Topic, TopicActivity, \
-    Activity, TopicSupport, User, Answer, ActivityType
+    Activity, TopicSupport, User, Answer, ActivityType, Group, StudentGroup
 
 admin.site.register(User)
 admin.site.register(Curriculum)
+admin.site.register(Group)
+admin.site.register(StudentGroup)
 admin.site.register(Objective)
 admin.site.register(Support)
 admin.site.register(Topic)

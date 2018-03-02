@@ -68,6 +68,38 @@ class TopicCurriculum(FiltersMixin, viewsets.ModelViewSet):
 
 
 """
+    List all Group, or create a new Group.
+    # api/group/
+    Retrieve, update or delete a Group instance.
+    # api/group/:id/
+"""
+class Group(FiltersMixin, viewsets.ModelViewSet):
+    queryset = Group.objects.all().order_by('-id')
+    serializer_class = GroupSerializer
+#     filter_backends = (filters.SearchFilter,)
+#     search_fields = ('titulo',)
+#     filter_mappings = {
+#         'title': 'titulo',
+#     }
+
+
+"""
+    List all StudentGroup, or create a new StudentGroup.
+    # api/studentGroup/
+    Retrieve, update or delete a StudentGroup instance.
+    # api/studentGroup/:id/
+"""
+class StudentGroup(FiltersMixin, viewsets.ModelViewSet):
+    queryset = StudentGroup.objects.all().order_by('-id')
+    serializer_class = StudentGroupSerializer
+#     filter_backends = (filters.SearchFilter,)
+#     search_fields = ('titulo',)
+#     filter_mappings = {
+#         'title': 'titulo',
+#     }
+
+
+"""
     List all Objective, or create a new Objective.
     # api/objective/
     Retrieve, update or delete a Objective instance.

@@ -24,6 +24,8 @@ router = DefaultRouter()
 router.register(r'api/topic', views.Topic)
 router.register(r'api/curriculum', views.Curriculum)
 router.register(r'api/topicCurriculum', views.TopicCurriculum)  # Relacao many-to-many (Topic - Curriculum)
+router.register(r'api/group', views.Group)
+router.register(r'api/studentGroup', views.StudentGroup)
 # router.register(r'api/objective', views.Objective)  # Nao esta sendo implementada ainda
 router.register(r'api/activityType', views.ActivityType)
 router.register(r'api/activity', views.Activity)

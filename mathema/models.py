@@ -43,6 +43,24 @@ class TopicCurriculum(models.Model):
         return "Relação entre: " + self.topic.title + " e " + self.curriculum.title
 
 
+class Group(models.Model):
+    title = models.CharField(max_length=100)
+    curriculum = models.ForeignKey(Curriculum)
+    group_key = models.CharField(max_length=10)
+    teacher = models.ForeignKey(User, related_name='teacher_group')
+    students = models.ManyToManyField(User, through='StudentGroup', null=True, blank=True, related_name='student_group')
+
+    def __str__(self):
+        return self.title
+
+class StudentGroup(models.Model):
+    student = models.ForeignKey(User)
+    group = models.ForeignKey(Group )
+
+    def __str__(self):
+        return "Relação entre: " + self.student.id + " e " + self.group.title
+
+
 class Objective(models.Model):
     curriculum = models.ForeignKey(Curriculum)
     title = models.CharField(max_length=100)
