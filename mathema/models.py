@@ -14,33 +14,25 @@ class User(AbstractUser):
                                                  default=1)
 
 
-class Topic(models.Model):
-    parent_topic = models.ForeignKey('self', null=True, blank=True)
-    title = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-    def __str__(self):
-        return self.title
-
-
 class Curriculum(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     creation_data = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    topics = models.ManyToManyField(Topic, through='TopicCurriculum', null=True, blank=True)
 
     def __str__(self):
         return self.title
 
 
-class TopicCurriculum(models.Model):
-    topic = models.ForeignKey(Topic)
+class Topic(models.Model):
+    parent_topic = models.ForeignKey('self', null=True, blank=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
     curriculum = models.ForeignKey(Curriculum)
 
     def __str__(self):
-        return "Relação entre: " + self.topic.title + " e " + self.curriculum.title
+        return self.title
 
 
 class Group(models.Model):
@@ -56,12 +48,13 @@ class Group(models.Model):
 
 class StudentGroup(models.Model):
     student = models.ForeignKey(User)
-    group = models.ForeignKey(Group )
+    group = models.ForeignKey(Group)
 
     def __str__(self):
-        return "Relação entre: " + self.student.id + " e " + self.group.title
+        return "Relação entre: " + self.student.username + " e " + self.group.title
 
 
+#  Objective não implementado
 class Objective(models.Model):
     curriculum = models.ForeignKey(Curriculum)
     title = models.CharField(max_length=100)
@@ -87,40 +80,25 @@ class ActivityType(models.Model):
 
 class Activity(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    type = models.ForeignKey(ActivityType, null=True)
-    topics = models.ManyToManyField(Topic, through='TopicActivity', null=True, blank=True)
+    type = models.ForeignKey(ActivityType)  # default = 1
+    topic = models.ForeignKey(Topic)
+    concluded = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
-
-
-class TopicActivity(models.Model):
-    topic = models.ForeignKey(Topic)
-    activity = models.ForeignKey(Activity, default=0)
-
-    def __str__(self):
-        return "Relação entre: " + self.topic.title + " e " + self.activity.title
 
 
 class Support(models.Model):
     title = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     content = models.TextField(default='Dica')
-    topics = models.ManyToManyField(Topic, through='TopicSupport', blank=True)
+    topic = models.ForeignKey(Topic)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
         return self.title
-
-
-class TopicSupport(models.Model):
-    topic = models.ForeignKey(Topic)
-    support = models.ForeignKey(Support)
-
-    def __str__(self):
-        return "Relação entre: " + self.topic.title + " e " + self.support.title + " (" + self.support.type + ") "
 
 
 class Answer(models.Model):
@@ -132,6 +110,10 @@ class Answer(models.Model):
     def __str__(self):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.author)
 
+    def save(self, *args, **kwargs):
+        if self.evaluation >= 6:
+            self.activity.concluded = True
+        super().save(*args, **kwargs)
 
 
 

@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Activity, TopicActivity, TopicSupport, Topic, \
-    Support, Objective, Curriculum, Answer, ActivityType, TopicCurriculum, Group, StudentGroup
+from .models import Activity, Topic, Group, StudentGroup, \
+    Support, Objective, Curriculum, Answer, ActivityType
 
 
 UserModel = get_user_model()
@@ -14,21 +14,15 @@ class UserCustomSerializer(serializers.ModelSerializer):
         fields = ('pk', 'username', 'email', 'is_active', 'user_type',)
 
 
-class TopicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Topic
-        fields = '__all__'
-
-
 class CurriculumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curriculum
         fields = '__all__'
 
 
-class TopicCurriculumSerializer(serializers.ModelSerializer):
+class TopicSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TopicCurriculum
+        model = Topic
         fields = '__all__'
 
 
@@ -62,21 +56,9 @@ class ActivitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TopicActivitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TopicActivity
-        fields = '__all__'
-
-
 class SupportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Support
-        fields = '__all__'
-
-
-class TopicSupportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TopicSupport
         fields = '__all__'
 
 
