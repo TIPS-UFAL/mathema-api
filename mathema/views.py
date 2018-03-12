@@ -2,9 +2,8 @@
 from django.shortcuts import get_object_or_404
 #from django.db.migrations import serializer
 from django.http import Http404
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets, filters, generics
+from rest_framework import status, viewsets, filters, generics, mixins
 
 from .models import *
 from .serializers import *
@@ -89,17 +88,6 @@ class Objective(FiltersMixin, viewsets.ModelViewSet):
 
 
 """
-    List all types of Activity, or create a new Type of Activity.
-    # api/activityType/
-    Retrieve, update or delete a Activity instance.
-    # api/activityType/:id/
-"""
-class ActivityType(viewsets.ModelViewSet):
-    queryset = ActivityType.objects.all().order_by('-id')
-    serializer_class = ActivityTypeSerializer
-
-
-"""
     List all Activity, or create a new Activity.
     # api/activity/
     Retrieve, update or delete a Activity instance.
@@ -127,11 +115,28 @@ class Support(viewsets.ModelViewSet):
     Retrieve, update or delete a Answer instance.
     # api/answer/:id/
 """
-class Answer(viewsets.ModelViewSet):
+class Answera(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     queryset = Answer.objects.all().order_by('-id')
     serializer_class = AnswerSerializer
+
+
+class Answer(viewsets.ViewSet,
+             mixins.CreateModelMixin,
+             mixins.DestroyModelMixin,
+             mixins.UpdateModelMixin):
+
+
+    def list(self, request, pk_activity):
+        queryset = Answer.objects.filter(activity=pk_activity)
+        serializer = AnswerSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk_user, pk_activity):
+        queryset = Answer.objects.all()
+        answer = get_object_or_404(queryset, activity=pk_activity, author=pk_user)
+        serializer = AnswerSerializer(queryset)
 
 
 """

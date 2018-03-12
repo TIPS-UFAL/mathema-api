@@ -26,14 +26,16 @@ router.register(r'api/topic', views.Topic)
 router.register(r'api/group', views.Group)
 router.register(r'api/studentGroup', views.StudentGroup)  # Relacao many-to-many (User(Student) - Group)
 # router.register(r'api/objective', views.Objective)  # Nao esta sendo implementada ainda
-router.register(r'api/activityType', views.ActivityType)
 router.register(r'api/activity', views.Activity)
 router.register(r'api/support', views.Support)
-router.register(r'api/answer', views.Answer)
+# router.register(r'api/answer', views.Answer, base_name='answer')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'api/user/(?P<pk>[0-9]+)/$', views.UserNamePerPK.as_view({'get': 'retrieve'})),
+    url(r'api/answer/(?P<pk_user>[0-9]+)/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'retrieve', })),
+    url(r'api/answer/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'list'})),
+    url(r'api/answer/(?P<pk>[0-9]+)/$', views.Answer.as_view({'post': 'create', 'put': 'update', 'delete': 'destroy'})),
     url(r'^', include(router.urls)),
     # Session Authentication
     url(r'^api/rest-auth/', include('rest_auth.urls')),

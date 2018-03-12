@@ -25,7 +25,7 @@ class Curriculum(models.Model):
 
 
 class Topic(models.Model):
-    parent_topic = models.ForeignKey('self', null=True, blank=True)
+    parent_topic = models.ForeignKey('self', null=True, blank=True)  # não implementado
     title = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -49,6 +49,7 @@ class Group(models.Model):
 class StudentGroup(models.Model):
     student = models.ForeignKey(User)
     group = models.ForeignKey(Group)
+    percent_complete = models.FloatField(default=0)
 
     def __str__(self):
         return "Relação entre: " + self.student.username + " e " + self.group.title
@@ -65,26 +66,18 @@ class Objective(models.Model):
         return self.title
 
 
-class ActivityType(models.Model):
+class Activity(models.Model):
     ACTIVITY_TYPE_CHOICES = (
         (1, 'problemas'),
         (2, 'multipla escolha'),
     )
 
-    activity_type = models.PositiveSmallIntegerField(choices=ACTIVITY_TYPE_CHOICES,
-                                                     default=1)
-
-    def __str__(self):
-        return self.activity_type
-
-
-class Activity(models.Model):
+    topic = models.ForeignKey(Topic)
     title = models.CharField(max_length=100)
     description = models.TextField()
+    models.PositiveSmallIntegerField(choices=ACTIVITY_TYPE_CHOICES,
+                                     default=1)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    type = models.ForeignKey(ActivityType)  # default = 1
-    topic = models.ForeignKey(Topic)
-    concluded = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -105,16 +98,19 @@ class Answer(models.Model):
     answer = models.TextField()
     activity = models.ForeignKey(Activity)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    evaluation = models.IntegerField(default=0)
 
     def __str__(self):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.author)
 
-    def save(self, *args, **kwargs):
-        if self.evaluation >= 6:
-            self.activity.concluded = True
-        super().save(*args, **kwargs)
 
+class Evaluation(models.Model):
+    answer = models.ForeignKey(Answer)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
+    evaluation = models.IntegerField(default=0)
+    feedback = models.CharField(max_length=300, blank=True, null=True)
+
+    def __str__(self):
+        return 'Answer: '+str(self.answer)+' Proprietario: '+str(self.answer.author)+'Avaliação: '+str(self.evaluation)
 
 
 
