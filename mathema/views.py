@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters, generics, mixins
 
 from .models import *
+from .models import Answer as AnswerModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from .permissions import IsTeacherOrReadOnly, IsStudent
 
 """
     APIREST
@@ -115,28 +117,25 @@ class Support(viewsets.ModelViewSet):
     Retrieve, update or delete a Answer instance.
     # api/answer/:id/
 """
-class Answera(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly, )
-
-    queryset = Answer.objects.all().order_by('-id')
-    serializer_class = AnswerSerializer
-
-
-class Answer(viewsets.ViewSet,
+class Answer(viewsets.GenericViewSet,
              mixins.CreateModelMixin,
              mixins.DestroyModelMixin,
-             mixins.UpdateModelMixin):
+             mixins.UpdateModelMixin,
+             mixins.RetrieveModelMixin):
 
+    queryset = AnswerModel.objects.all()
+    serializer_class = AnswerSerializer
 
     def list(self, request, pk_activity):
-        queryset = Answer.objects.filter(activity=pk_activity)
+        queryset = AnswerModel.objects.filter(activity=pk_activity).order_by('-id')
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk_user, pk_activity):
-        queryset = Answer.objects.all()
-        answer = get_object_or_404(queryset, activity=pk_activity, author=pk_user)
-        serializer = AnswerSerializer(queryset)
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = (IsTeacherOrReadOnly, IsAuthenticated, )
+        else:
+            permission_classes = (IsStudent, IsAuthenticated, )
 
 
 """

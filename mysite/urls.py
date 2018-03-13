@@ -33,9 +33,10 @@ router.register(r'api/support', views.Support)
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'api/user/(?P<pk>[0-9]+)/$', views.UserNamePerPK.as_view({'get': 'retrieve'})),
-    url(r'api/answer/(?P<pk_user>[0-9]+)/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'retrieve', })),
-    url(r'api/answer/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'list'})),
-    url(r'api/answer/(?P<pk>[0-9]+)/$', views.Answer.as_view({'post': 'create', 'put': 'update', 'delete': 'destroy'})),
+    url(r'api/answer/list/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'list'})),
+    url(r'api/answer/$', views.Answer.as_view({'post': 'create'})),
+    url(r'api/answer/(?P<pk>[0-9]+)/$', views.Answer.as_view({'get': 'retrieve', 'put': 'update',
+                                                              'delete': 'destroy'})),
     url(r'^', include(router.urls)),
     # Session Authentication
     url(r'^api/rest-auth/', include('rest_auth.urls')),

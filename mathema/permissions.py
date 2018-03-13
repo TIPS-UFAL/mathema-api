@@ -15,3 +15,7 @@ class IsTeacherOrReadOnly(permissions.BasePermission):
         # Write permissions are only allowed to a teacher.
         return request.user.user_type == 2
 
+
+class IsStudent(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.author == request.user.pk
