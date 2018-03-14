@@ -26,7 +26,7 @@ class IsTeacher(permissions.BasePermission):
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
-        Custom permission to only allow the Owner of an object to edit and to see it.
+        Custom permission to only allow the Owner of an object to edit it.
     """
 
     def has_object_permission(self, request, view, obj):

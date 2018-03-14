@@ -26,6 +26,8 @@ from .permissions import IsTeacher, IsOwnerOrReadOnly
     # api/curriculum?category='' or api/search?title=
 """
 class Curriculum(FiltersMixin, viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, IsTeacher, )
+
     queryset = Curriculum.objects.all().order_by('-id')
     serializer_class = CurriculumSerializer
     filter_backends = (filters.SearchFilter,)
