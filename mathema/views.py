@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters, generics, mixins
 
 from .models import *
-from .models import Answer as AnswerModel, Activity as ActivityModel
+from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticated
@@ -116,9 +116,19 @@ class Activity(viewsets.GenericViewSet,
     Retrieve, update or delete a support instance.
     # api/support/:id/
 """
-class Support(viewsets.ModelViewSet):
-    queryset = Support.objects.all().order_by('-id')
+class Support(viewsets.GenericViewSet,
+               mixins.CreateModelMixin,
+               mixins.DestroyModelMixin,
+               mixins.UpdateModelMixin,
+               mixins.RetrieveModelMixin):
+
+    queryset = SupportModel.objects.all()
     serializer_class = SupportSerializer
+
+    def list(self, request, pk_topic):
+        queryset = SupportModel.objects.filter(topic=pk_topic)
+        serializer = SupportSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 """
