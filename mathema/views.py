@@ -10,7 +10,7 @@ from .models import Answer as AnswerModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from .permissions import IsTeacherOrReadOnly, IsStudent
+from .permissions import IsTeacher, IsOwner
 
 """
     APIREST
@@ -126,16 +126,20 @@ class Answer(viewsets.GenericViewSet,
     queryset = AnswerModel.objects.all()
     serializer_class = AnswerSerializer
 
+    def get_permissions(self):
+        print(self)
+        print(self.action)
+        if self.action == 'list':
+            permission_classes = [IsTeacher, IsAuthenticated]
+        else:
+            permission_classes = [IsOwner, IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
+
     def list(self, request, pk_activity):
         queryset = AnswerModel.objects.filter(activity=pk_activity).order_by('-id')
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
-
-    def get_permissions(self):
-        if self.action == 'list':
-            permission_classes = (IsTeacherOrReadOnly, IsAuthenticated, )
-        else:
-            permission_classes = (IsStudent, IsAuthenticated, )
 
 
 """

@@ -16,6 +16,17 @@ class IsTeacherOrReadOnly(permissions.BasePermission):
         return request.user.user_type == 2
 
 
-class IsStudent(permissions.BasePermission):
+class IsTeacher(permissions.BasePermission):
+    """
+        Custom permission to only allow teacher of an object to edit and to see it.
+    """
+    def has_permission(self, request, view):
+        return request.user.user_type == 2
+
+
+class IsOwner(permissions.BasePermission):
+    """
+        Custom permission to only allow the Owner of an object to edit and to see it.
+    """
     def has_object_permission(self, request, view, obj):
-        return obj.author == request.user.pk
+        return obj.author == request.user
