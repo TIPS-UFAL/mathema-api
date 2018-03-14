@@ -6,11 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters, generics, mixins
 
 from .models import *
-from .models import Answer as AnswerModel
+from .models import Answer as AnswerModel, Activity as ActivityModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from .permissions import IsTeacher, IsOwner
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsTeacher, IsOwnerOrReadOnly
 
 """
     APIREST
@@ -95,9 +95,19 @@ class Objective(FiltersMixin, viewsets.ModelViewSet):
     Retrieve, update or delete a Activity instance.
     # api/activity/:id/
 """
-class Activity(viewsets.ModelViewSet):
-    queryset = Activity.objects.all().order_by('-id')
+class Activity(viewsets.GenericViewSet,
+               mixins.CreateModelMixin,
+               mixins.DestroyModelMixin,
+               mixins.UpdateModelMixin,
+               mixins.RetrieveModelMixin):
+
+    queryset = ActivityModel.objects.all()
     serializer_class = ActivitySerializer
+
+    def list(self, request, pk_topic):
+        queryset = ActivityModel.objects.filter(topic=pk_topic)
+        serializer = ActivitySerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 """
@@ -132,7 +142,7 @@ class Answer(viewsets.GenericViewSet,
         if self.action == 'list':
             permission_classes = [IsTeacher, IsAuthenticated]
         else:
-            permission_classes = [IsOwner, IsAuthenticated]
+            permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
         return [permission() for permission in permission_classes]
 
