@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters, generics, mixins
 
 from .models import *
-from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel
+from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticated
@@ -41,9 +41,20 @@ class Curriculum(FiltersMixin, viewsets.ModelViewSet):
     Retrieve, update or delete a Topic instance.
     # api/topic/:id/
 """
-class Topic(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Topic.objects.all().order_by('-id')
+class Topic(FiltersMixin, viewsets.GenericViewSet,
+               mixins.CreateModelMixin,
+               mixins.DestroyModelMixin,
+               mixins.UpdateModelMixin,
+               mixins.RetrieveModelMixin):
+
+    queryset = TopicModel.objects.all()
     serializer_class = TopicSerializer
+
+    def list(self, request, pk_curriculum):
+        queryset = TopicModel.objects.filter(curriculum=pk_curriculum)
+        serializer = TopicSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('titulo',)
 #     filter_mappings = {
