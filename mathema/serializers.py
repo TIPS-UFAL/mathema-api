@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import Activity, Topic, Group, StudentGroup, \
-    Support, Objective, Curriculum, Answer, ActivityType
+    Support, Objective, Curriculum, Answer
 
 
 UserModel = get_user_model()
@@ -41,12 +41,6 @@ class StudentGroupSerializer(serializers.ModelSerializer):
 class ObjectiveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Objective
-        fields = '__all__'
-
-
-class ActivityTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ActivityType
         fields = '__all__'
 
 
