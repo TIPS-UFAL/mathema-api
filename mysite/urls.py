@@ -27,8 +27,9 @@ router.register(r'api/group', views.Group)
 router.register(r'api/studentGroup', views.StudentGroup)  # Relacao many-to-many (User(Student) - Group)
 # router.register(r'api/objective', views.Objective)  # Nao esta sendo implementada ainda
 router.register(r'api/activity', views.Activity, base_name='activity')
-router.register(r'api/answer', views.Answer, base_name='answer')
 router.register(r'api/support', views.Support, base_name='support')
+router.register(r'api/answer', views.Answer, base_name='answer')
+router.register(r'api/evaluation', views.Evaluation, base_name='evaluation')
 
 
 urlpatterns = [
