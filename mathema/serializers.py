@@ -56,16 +56,25 @@ class SupportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class EvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evaluation
+        fields = ('evaluation', 'feedback', 'teacher')
+
+
 class AnswerSerializer(serializers.ModelSerializer):
+    evaluation = EvaluationSerializer(many=False, read_only=True)
+
     class Meta:
         model = Answer
         fields = '__all__'
 
-
-class EvaluationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Evaluation
-        fields = '__all__'
+    def create(self, validated_data):
+        evaluation_data = validated_data.pop('evaluation', None)
+        answer = Answer.objects.create(**validated_data)
+        # This always creates a Evaluation if the Answer is missing one;
+        Evaluation.objects.create(answer=answer, teacher=answer.activity.author, evaluation=0, defaults=evaluation_data)
+        return answer
 
 
 class UserNamePerPKSerializer(serializers.ModelSerializer):

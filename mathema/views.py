@@ -175,17 +175,15 @@ class Answer(viewsets.GenericViewSet,
         return Response(serializer.data)
 
 
+"""
+    Update and Retrieve a Evaluation instance
+    # api/evaluation/:id/
+"""
 class Evaluation(viewsets.GenericViewSet,
-                 mixins.CreateModelMixin,
                  mixins.UpdateModelMixin,
-                 mixins.DestroyModelMixin):
+                 mixins.RetrieveModelMixin):
     queryset = EvaluationModel.objects.all()
     serializer_class = EvaluationSerializer
-
-    def retrieve(self, request, pk):
-        evaluation = get_object_or_404(self.queryset, pk=pk)
-        serializer = EvaluationSerializer(evaluation)
-        return Response(serializer.data)
 
 
 """
