@@ -106,7 +106,7 @@ class Answer(models.Model):
 class Evaluation(models.Model):
     answer = models.OneToOneField(Answer, on_delete=models.CASCADE, primary_key=True)  # chave primária é a prória answer
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
-    evaluation = models.IntegerField(default=0)
+    evaluation = models.IntegerField(null=True)
     feedback = models.TextField(blank=True, null=True)
 
     def __str__(self):

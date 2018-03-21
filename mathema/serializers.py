@@ -73,7 +73,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         evaluation_data = validated_data.pop('evaluation', None)
         answer = Answer.objects.create(**validated_data)
         # This always creates a Evaluation if the Answer is missing one;
-        Evaluation.objects.create(answer=answer, teacher=answer.activity.author, evaluation=0, defaults=evaluation_data)
+        Evaluation.objects.create(answer=answer, teacher=answer.activity.author, evaluation=None, feedback=None)
         return answer
 
 
