@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import Activity, Topic, Group, StudentGroup, \
-    Support, Objective, Curriculum, Answer
+    Support, Objective, Curriculum, Answer, Evaluation
 
 
 UserModel = get_user_model()
@@ -56,10 +56,25 @@ class SupportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class EvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evaluation
+        fields = ('evaluation', 'feedback', 'teacher')
+
+
 class AnswerSerializer(serializers.ModelSerializer):
+    evaluation = EvaluationSerializer(many=False, read_only=True)
+
     class Meta:
         model = Answer
         fields = '__all__'
+
+    def create(self, validated_data):
+        evaluation_data = validated_data.pop('evaluation', None)
+        answer = Answer.objects.create(**validated_data)
+        # This always creates a Evaluation if the Answer is missing one;
+        Evaluation.objects.create(answer=answer, teacher=answer.activity.author, evaluation=None, feedback=None)
+        return answer
 
 
 class UserNamePerPKSerializer(serializers.ModelSerializer):

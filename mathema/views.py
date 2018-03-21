@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters, generics, mixins
 
 from .models import *
-from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel
+from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel, Evaluation as EvaluationModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticated
@@ -173,6 +173,17 @@ class Answer(viewsets.GenericViewSet,
         queryset = AnswerModel.objects.filter(activity=pk_activity).order_by('-id')
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
+
+
+"""
+    Update and Retrieve a Evaluation instance
+    # api/evaluation/:id/
+"""
+class Evaluation(viewsets.GenericViewSet,
+                 mixins.UpdateModelMixin,
+                 mixins.RetrieveModelMixin):
+    queryset = EvaluationModel.objects.all()
+    serializer_class = EvaluationSerializer
 
 
 """
