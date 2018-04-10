@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from uuid import uuid4
 
 
 class User(AbstractUser):
@@ -36,9 +37,14 @@ class Topic(models.Model):
 
 
 class Group(models.Model):
+    def random_value_generate():
+        aleatory_value = uuid4()
+        aleatory_value = aleatory_value.hex  # str value
+        return aleatory_value[0:8]  # length = 8
+
     title = models.CharField(max_length=100)
     curriculum = models.ForeignKey(Curriculum)
-    group_key = models.CharField(max_length=10)
+    group_key = models.CharField(max_length=8, default=random_value_generate, unique=True)
     teacher = models.ForeignKey(User, related_name='teacher_group')
     students = models.ManyToManyField(User, through='StudentGroup', null=True, blank=True, related_name='student_group')
 

@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters, generics, mixins
+from django.contrib.auth.models import User
 
 from .models import *
 from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel, Evaluation as EvaluationModel
@@ -23,17 +24,18 @@ from .permissions import IsTeacher, IsOwnerOrReadOnly
     Retrieve, up  date or delete a curriculum instance.
     # api/curriculum/:pk
     Search curriculuns by title
-    # api/curriculum?category='' or api/search?title=
+    # api/curriculum?title='' or api/curriculum?search=''
 """
 class Curriculum(FiltersMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsTeacher, )
 
     queryset = Curriculum.objects.all().order_by('-id')
     serializer_class = CurriculumSerializer
+
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('titulo',)
+    search_fields = ('title',)
     filter_mappings = {
-        'title': 'titulo',
+        'title': 'title',
     }
 
 
@@ -71,13 +73,15 @@ class Topic(FiltersMixin, viewsets.GenericViewSet,
     # api/group/:id/
 """
 class Group(FiltersMixin, viewsets.ModelViewSet):
+
     queryset = Group.objects.all().order_by('-id')
     serializer_class = GroupSerializer
-#     filter_backends = (filters.SearchFilter,)
-#     search_fields = ('titulo',)
-#     filter_mappings = {
-#         'title': 'titulo',
-#     }
+
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('group_key',)
+    filter_mappings = {
+        'group_key': 'group_key',
+    }
 
 
 """
