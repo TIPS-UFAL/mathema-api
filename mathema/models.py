@@ -47,6 +47,7 @@ class Group(models.Model):
     group_key = models.CharField(max_length=8, default=random_value_generate, unique=True)
     teacher = models.ForeignKey(User, related_name='teacher_group')
     students = models.ManyToManyField(User, through='StudentGroup', null=True, blank=True, related_name='student_group')
+    visible = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title

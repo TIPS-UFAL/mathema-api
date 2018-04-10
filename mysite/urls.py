@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'api/user/(?P<pk>[0-9]+)/$', views.UserNamePerPK.as_view({'get': 'retrieve'})),
     url(r'api/topic/list/(?P<pk_curriculum>[0-9]+)/$', views.Topic.as_view({'get': 'list'})),
+    url(r'api/studentGroup/(?P<pk_student>[0-9]+)/(?P<pk_group>[0-9]+)/$', views.StudentGroup.as_view({'get': 'retrieve'})),
     url(r'api/activity/list/(?P<pk_topic>[0-9]+)/$', views.Activity.as_view({'get': 'list'})),
     url(r'api/support/list/(?P<pk_topic>[0-9]+)/$', views.Support.as_view({'get': 'list'})),
     url(r'api/answer/list/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'list'})),
