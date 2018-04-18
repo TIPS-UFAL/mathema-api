@@ -73,25 +73,17 @@ class Topic(FiltersMixin, viewsets.GenericViewSet,
     Retrieve, update or delete a Group instance.
     # api/group/:id/
     Search groups by group_key
-    # api/group?group_key='' or api/curriculum?search=''
+    # api/group?group_key='' or api/group?search=''
 """
-class Group(FiltersMixin,
-            viewsets.GenericViewSet,
+class Group(viewsets.GenericViewSet,
             mixins.RetrieveModelMixin,
             mixins.CreateModelMixin,
             mixins.UpdateModelMixin,
             mixins.DestroyModelMixin):
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly,)
 
-    queryset = GroupModel.objects.all().order_by('-id')
+    queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
-
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('group_key',)
-    filter_mappings = {
-        'group_key': 'group_key',
-        'student': 'students'
-    }
 
     def list(self, request):
         queryset = GroupModel.objects.filter(visible=True)
