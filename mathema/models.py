@@ -78,12 +78,17 @@ class Activity(models.Model):
         (1, 'problemas'),
         (2, 'multipla escolha'),
     )
+    ACTIVITY_DIFFICULTY_CHOICES = (
+        (1, 'iniciante'),
+        (2, 'intermediario'),
+        (3, 'avançado'),
+    )
 
     topic = models.ForeignKey(Topic)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    models.PositiveSmallIntegerField(choices=ACTIVITY_TYPE_CHOICES,
-                                     default=1)
+    type = models.TextField()
+    difficulty = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
