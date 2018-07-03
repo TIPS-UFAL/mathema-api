@@ -7,7 +7,8 @@ from rest_framework import status, viewsets, filters, generics, mixins
 from django.contrib.auth.models import User
 
 from .models import *
-from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel, Evaluation as EvaluationModel
+from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel, \
+    Evaluation as EvaluationModel, StudentGroup as StudentGroupModel, Group as GroupModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticated
@@ -71,28 +72,52 @@ class Topic(FiltersMixin, viewsets.GenericViewSet,
     # api/group/
     Retrieve, update or delete a Group instance.
     # api/group/:id/
+    Search groups by group_key
+    # api/group?group_key='' or api/group?search=''
 """
-class Group(FiltersMixin, viewsets.ModelViewSet):
+class Group(viewsets.GenericViewSet,
+            mixins.RetrieveModelMixin,
+            mixins.CreateModelMixin,
+            mixins.UpdateModelMixin,
+            mixins.DestroyModelMixin):
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly,)
 
-    queryset = Group.objects.all().order_by('-id')
+    queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
 
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('group_key',)
-    filter_mappings = {
-        'group_key': 'group_key',
-    }
+    def list(self, request):
+        queryset = GroupModel.objects.filter(visible=True)
+        serializer = GroupSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 """
     List all StudentGroup, or create a new StudentGroup.
     # api/studentGroup/
     Retrieve, update or delete a StudentGroup instance.
-    # api/studentGroup/:id/
+    # api/studentGroup/:id_student/:id_group
 """
-class StudentGroup( viewsets.ModelViewSet):
-    queryset = StudentGroup.objects.all().order_by('-id')
+class StudentGroup( FiltersMixin,
+                    viewsets.GenericViewSet,
+                    mixins.CreateModelMixin,
+                    mixins.DestroyModelMixin):
+
+    queryset = StudentGroupModel.objects.all().order_by('-id')
     serializer_class = StudentGroupSerializer
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            permission_classes = [IsTeacher, IsAuthenticated]
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
+
+    def retrieve(self, request, pk_student=None, pk_group=None):
+        queryset = StudentGroupModel.objects.filter(student=pk_student, group=pk_group)
+        group = get_object_or_404(self.queryset, pk=queryset)
+        serializer = StudentGroupSerializer(group)
+        return Response(serializer.data)
 
 
 """
