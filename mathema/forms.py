@@ -24,4 +24,4 @@ class ObjectiveForm(ModelForm):
 class ActivityForm(ModelForm):
     class Meta:
         model = Activity
-        fields = ['titulo', 'descricao']
+        fields = ['titulo', 'descricao', 'tipo', 'dificuldade']
