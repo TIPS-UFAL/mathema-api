@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from uuid import uuid4
 
 
 class User(AbstractUser):
@@ -15,47 +16,91 @@ class User(AbstractUser):
 
 
 class Curriculum(models.Model):
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300)
-    data_criacao = models.DateTimeField(default=timezone.now)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    creation_data = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
-class Objetivo(models.Model):
+class Topic(models.Model):
+    parent_topic = models.ForeignKey('self', null=True, blank=True)  # não implementado
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
     curriculum = models.ForeignKey(Curriculum)
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300, null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
-class TipoSuporte(models.Model):
-    nome = models.CharField(max_length=100)
+class Group(models.Model):
+    def random_value_generate():
+        aleatory_value = uuid4()
+        aleatory_value = aleatory_value.hex  # str value
+        return aleatory_value[0:8]  # length = 8
+
+    group_key = models.CharField(max_length=8, default=random_value_generate, editable=False, primary_key=True)
+    title = models.CharField(max_length=100)
+    curriculum = models.ForeignKey(Curriculum)
+    teacher = models.ForeignKey(User, related_name='teacher_group')
+    students = models.ManyToManyField(User, through='StudentGroup', null=True, blank=True, related_name='student_group')
+    visible = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.nome
+        return self.title
 
 
-class Suporte(models.Model):
-    titulo = models.CharField(max_length=100)
-    tipo = models.ForeignKey(TipoSuporte)
-    arquivo = models.FileField(upload_to='suporte', null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+class StudentGroup(models.Model):
+    student = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    percent_complete = models.FloatField(default=0)
 
     def __str__(self):
-        return self.titulo
+        return "Relação entre: " + self.student.username + " e " + self.group.title
 
 
-class Atividade(models.Model):
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300, null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+#  Objective não implementado
+class Objective(models.Model):
+    curriculum = models.ForeignKey(Curriculum)
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=300, null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.title
+
+
+class Activity(models.Model):
+    ACTIVITY_TYPE_CHOICES = (
+        (1, 'problemas'),
+        (2, 'multipla escolha'),
+    )
+    ACTIVITY_DIFFICULTY_CHOICES = (
+        (1, 'iniciante'),
+        (2, 'intermediario'),
+        (3, 'avançado'),
+    )
+
+    topic = models.ForeignKey(Topic)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    type = models.TextField()
+    difficulty = models.TextField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.title
+
+
+class Support(models.Model):
+    title = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    content = models.TextField(default='Dica')
+    topic = models.ForeignKey(Topic)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
         return self.title
@@ -63,40 +108,22 @@ class Atividade(models.Model):
 
 class Answer(models.Model):
     answer = models.TextField()
-    activity = models.ForeignKey(Atividade)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    activity = models.ForeignKey(Activity)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):
-        return 'Questão: '+str(self.activity)+' Proprietario: '+str(self.owner)
+        return 'Question: '+str(self.activity)+' Proprietario: '+str(self.author)
 
 
-class Topico(models.Model):
-    objetivo = models.ForeignKey(Objetivo)
-    topicoPai = models.ForeignKey('self', null=True, blank=True)
-    titulo = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=300, null=True, blank=True)
-    suportes = models.ManyToManyField(Suporte, through='TopicoSuporte', null=True, blank=True)
-    atividades = models.ManyToManyField(Atividade, through='TopicoAtividade', null=True, blank=True)
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL)
+class Evaluation(models.Model):
+    answer = models.OneToOneField(Answer, on_delete=models.CASCADE, primary_key=True)  # chave primária é a prória answer
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
+    evaluation = models.IntegerField(null=True)
+    feedback = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.titulo
+        return 'Answer: '+str(self.answer)+' Proprietario: '+str(self.answer.author)+'Avaliação: '+str(self.evaluation)
 
-
-class TopicoAtividade(models.Model):
-    topico = models.ForeignKey(Topico)
-    atividade = models.ForeignKey(Atividade)
-
-    def __str__(self):
-        return self.topico.titulo + " possui " + self.atividade.titulo
-
-
-class TopicoSuporte(models.Model):
-    topico = models.ForeignKey(Topico)
-    suporte = models.ForeignKey(Suporte)
-
-    def __str__(self):
-        return self.topico.titulo + " possui " + self.suporte.titulo + " (" + self.suporte.tipo + ") "
 
 
 

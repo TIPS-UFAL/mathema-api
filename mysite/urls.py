@@ -15,24 +15,31 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from rest_framework.urlpatterns import format_suffix_patterns
-from rest_framework.routers import DefaultRouter
 
 from mathema import views
 from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token
+from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'api/curriculum', views.Curriculum)
-router.register(r'api/support', views.Suporte)
-router.register(r'api/activity', views.Atividade)
-router.register(r'api/answer', views.Answer)
-router.register(r'api/topic', views.Topico)
-router.register(r'api/objective', views.Objetivo)
-router.register(r'api/supportType', views.TipoSuporte)
-router.register(r'api/activityTopic', views.TopicoAtividade)
-router.register(r'api/supportTopic', views.TopicoSuporte)
+router.register(r'api/topic', views.Topic)
+router.register(r'api/group', views.Group)
+router.register(r'api/studentGroup', views.StudentGroup)  # Relacao many-to-many (User(Student) - Group)
+# router.register(r'api/objective', views.Objective)  # Nao esta sendo implementada ainda
+router.register(r'api/activity', views.Activity, base_name='activity')
+router.register(r'api/support', views.Support, base_name='support')
+router.register(r'api/answer', views.Answer, base_name='answer')
+router.register(r'api/evaluation', views.Evaluation, base_name='evaluation')
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'api/user/(?P<pk>[0-9]+)/$', views.UserNamePerPK.as_view({'get': 'retrieve'})),
+    url(r'api/topic/list/(?P<pk_curriculum>[0-9]+)/$', views.Topic.as_view({'get': 'list'})),
+    url(r'api/studentGroup/(?P<pk_student>[0-9]+)/(?P<pk_group>[a-zA-Z0-9]+)/$', views.StudentGroup.as_view({'get': 'retrieve'})),
+    url(r'api/activity/list/(?P<pk_topic>[0-9]+)/$', views.Activity.as_view({'get': 'list'})),
+    url(r'api/support/list/(?P<pk_topic>[0-9]+)/$', views.Support.as_view({'get': 'list'})),
+    url(r'api/answer/list/(?P<pk_activity>[0-9]+)/$', views.Answer.as_view({'get': 'list'})),
     url(r'^', include(router.urls)),
     # Session Authentication
     url(r'^api/rest-auth/', include('rest_auth.urls')),

@@ -77,9 +77,9 @@ JWT_AUTH = {
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7)
 }
 
-# REST_AUTH_SERIALIZERS = {
-#     'USER_DETAILS_SERIALIZER': 'mathema.serializers.UserCustomSerializer',
-# }
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'mathema.serializers.UserCustomSerializer',
+}
 
 # Enables django-rest-auth to use JWT tokens instead of regular tokens.
 REST_USE_JWT = True
