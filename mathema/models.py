@@ -123,8 +123,3 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return 'Answer: '+str(self.answer)+' Proprietario: '+str(self.answer.author)+'Avaliação: '+str(self.evaluation)
-
-
-
-
-
