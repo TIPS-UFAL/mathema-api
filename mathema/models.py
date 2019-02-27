@@ -19,18 +19,18 @@ class Curriculum(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     creation_data = models.DateTimeField(default=timezone.now)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
 
 
 class Topic(models.Model):
-    parent_topic = models.ForeignKey('self', null=True, blank=True)  # não implementado
+    parent_topic = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)  # não implementado
     title = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    curriculum = models.ForeignKey(Curriculum)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -44,9 +44,9 @@ class Group(models.Model):
 
     group_key = models.CharField(max_length=8, default=random_value_generate, editable=False, primary_key=True)
     title = models.CharField(max_length=100)
-    curriculum = models.ForeignKey(Curriculum)
-    teacher = models.ForeignKey(User, related_name='teacher_group')
-    students = models.ManyToManyField(User, through='StudentGroup', null=True, blank=True, related_name='student_group')
+    curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(User, related_name='teacher_group', on_delete=models.CASCADE)
+    students = models.ManyToManyField(User, through='StudentGroup', blank=True, related_name='student_group')
     visible = models.BooleanField(default=True)
 
     def __str__(self):
@@ -54,8 +54,8 @@ class Group(models.Model):
 
 
 class StudentGroup(models.Model):
-    student = models.ForeignKey(User)
-    group = models.ForeignKey(Group)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     percent_complete = models.FloatField(default=0)
 
     def __str__(self):
@@ -64,10 +64,10 @@ class StudentGroup(models.Model):
 
 #  Objective não implementado
 class Objective(models.Model):
-    curriculum = models.ForeignKey(Curriculum)
+    curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=300, null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -84,12 +84,12 @@ class Activity(models.Model):
         (3, 'avançado'),
     )
 
-    topic = models.ForeignKey(Topic)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     description = models.TextField()
     type = models.TextField()
     difficulty = models.TextField()
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -99,8 +99,8 @@ class Support(models.Model):
     title = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     content = models.TextField(default='Dica')
-    topic = models.ForeignKey(Topic)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -108,8 +108,8 @@ class Support(models.Model):
 
 class Answer(models.Model):
     answer = models.TextField()
-    activity = models.ForeignKey(Activity)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return 'Question: '+str(self.activity)+' Proprietario: '+str(self.author)
@@ -117,7 +117,7 @@ class Answer(models.Model):
 
 class Evaluation(models.Model):
     answer = models.OneToOneField(Answer, on_delete=models.CASCADE, primary_key=True)  # chave primária é a prória answer
-    teacher = models.ForeignKey(settings.AUTH_USER_MODEL)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     evaluation = models.IntegerField(null=True)
     feedback = models.TextField(blank=True, null=True)
 
