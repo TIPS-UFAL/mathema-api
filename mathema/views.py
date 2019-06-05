@@ -7,8 +7,8 @@ from rest_framework import status, viewsets, filters, generics, mixins
 from django.contrib.auth.models import User
 
 from .models import *
-from .models import Answer as AnswerModel, Activity as ActivityModel, Support as SupportModel, Topic as TopicModel, \
-    Evaluation as EvaluationModel, StudentGroup as StudentGroupModel, Group as GroupModel
+from .models import Topic as TopicModel, \
+    StudentGroup as StudentGroupModel, Group as GroupModel
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticated
@@ -126,9 +126,9 @@ class StudentGroup( FiltersMixin,
     Retrieve, update or delete a Objective instance.
     # api/objective/:id/
 """
-class Objective(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Objective.objects.all().order_by('-id')
-    serializer_class = ObjectiveSerializer
+# class Objective(FiltersMixin, viewsets.ModelViewSet):
+#     queryset = Objective.objects.all().order_by('-id')
+#     serializer_class = ObjectiveSerializer
 
 
 """
@@ -137,20 +137,20 @@ class Objective(FiltersMixin, viewsets.ModelViewSet):
     Retrieve, update or delete a Activity instance.
     # api/activity/:id/
 """
-class Activity(viewsets.GenericViewSet,
-               mixins.CreateModelMixin,
-               mixins.DestroyModelMixin,
-               mixins.UpdateModelMixin,
-               mixins.RetrieveModelMixin):
-
-    queryset = ActivityModel.objects.all()
-    serializer_class = ActivitySerializer
-
-    def list(self, request, pk_topic):
-        queryset = ActivityModel.objects.filter(topic=pk_topic)
-        serializer = ActivitySerializer(queryset, many=True)
-        return Response(serializer.data)
-
+# class Activity(viewsets.GenericViewSet,
+#                mixins.CreateModelMixin,
+#                mixins.DestroyModelMixin,
+#                mixins.UpdateModelMixin,
+#                mixins.RetrieveModelMixin):
+#
+#     queryset = ActivityModel.objects.all()
+#     serializer_class = ActivitySerializer
+#
+#     def list(self, request, pk_topic):
+#         queryset = ActivityModel.objects.filter(topic=pk_topic)
+#         serializer = ActivitySerializer(queryset, many=True)
+#         return Response(serializer.data)
+#
 
 """
     List all Supports, or create a new support.
@@ -158,19 +158,19 @@ class Activity(viewsets.GenericViewSet,
     Retrieve, update or delete a support instance.
     # api/support/:id/
 """
-class Support(viewsets.GenericViewSet,
-               mixins.CreateModelMixin,
-               mixins.DestroyModelMixin,
-               mixins.UpdateModelMixin,
-               mixins.RetrieveModelMixin):
-
-    queryset = SupportModel.objects.all()
-    serializer_class = SupportSerializer
-
-    def list(self, request, pk_topic):
-        queryset = SupportModel.objects.filter(topic=pk_topic)
-        serializer = SupportSerializer(queryset, many=True)
-        return Response(serializer.data)
+# class Support(viewsets.GenericViewSet,
+#                mixins.CreateModelMixin,
+#                mixins.DestroyModelMixin,
+#                mixins.UpdateModelMixin,
+#                mixins.RetrieveModelMixin):
+#
+#     queryset = SupportModel.objects.all()
+#     serializer_class = SupportSerializer
+#
+#     def list(self, request, pk_topic):
+#         queryset = SupportModel.objects.filter(topic=pk_topic)
+#         serializer = SupportSerializer(queryset, many=True)
+#         return Response(serializer.data)
 
 
 """
@@ -179,40 +179,40 @@ class Support(viewsets.GenericViewSet,
     Retrieve, update or delete a Answer instance.
     # api/answer/:id/
 """
-class Answer(viewsets.GenericViewSet,
-             mixins.CreateModelMixin,
-             mixins.DestroyModelMixin,
-             mixins.UpdateModelMixin,
-             mixins.RetrieveModelMixin):
-
-    queryset = AnswerModel.objects.all()
-    serializer_class = AnswerSerializer
-
-    def get_permissions(self):
-        print(self)
-        print(self.action)
-        if self.action == 'list':
-            permission_classes = [IsTeacher, IsAuthenticated]
-        else:
-            permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
-
-        return [permission() for permission in permission_classes]
-
-    def list(self, request, pk_activity):
-        queryset = AnswerModel.objects.filter(activity=pk_activity).order_by('-id')
-        serializer = AnswerSerializer(queryset, many=True)
-        return Response(serializer.data)
+# class Answer(viewsets.GenericViewSet,
+#              mixins.CreateModelMixin,
+#              mixins.DestroyModelMixin,
+#              mixins.UpdateModelMixin,
+#              mixins.RetrieveModelMixin):
+#
+#     queryset = AnswerModel.objects.all()
+#     serializer_class = AnswerSerializer
+#
+#     def get_permissions(self):
+#         print(self)
+#         print(self.action)
+#         if self.action == 'list':
+#             permission_classes = [IsTeacher, IsAuthenticated]
+#         else:
+#             permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
+#
+#         return [permission() for permission in permission_classes]
+#
+#     def list(self, request, pk_activity):
+#         queryset = AnswerModel.objects.filter(activity=pk_activity).order_by('-id')
+#         serializer = AnswerSerializer(queryset, many=True)
+#         return Response(serializer.data)
 
 
 """
     Update and Retrieve a Evaluation instance
     # api/evaluation/:id/
 """
-class Evaluation(viewsets.GenericViewSet,
-                 mixins.UpdateModelMixin,
-                 mixins.RetrieveModelMixin):
-    queryset = EvaluationModel.objects.all()
-    serializer_class = EvaluationSerializer
+# class Evaluation(viewsets.GenericViewSet,
+#                  mixins.UpdateModelMixin,
+#                  mixins.RetrieveModelMixin):
+#     queryset = EvaluationModel.objects.all()
+#     serializer_class = EvaluationSerializer
 
 
 """
