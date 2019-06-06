@@ -11,8 +11,7 @@ class User(AbstractUser):
         (2, 'teacher'),
     )
 
-    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES,
-                                                 default=1)
+    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES, default=1)
 
 
 class Tag(models.Model):
@@ -37,8 +36,7 @@ class Curriculum(models.Model):
 
 
 class Group(models.Model):
-    @staticmethod
-    def random_value_generate():
+    def random_value_generate(self):
         aleatory_value = uuid4()
         aleatory_value = aleatory_value.hex  # str value
         return aleatory_value[0:8]  # length = 8
@@ -93,8 +91,7 @@ class Question(models.Model):
         (3, 'avançado'),
     )
 
-    difficulty_level = models.PositiveSmallIntegerField(choices=QUESTION_DIFFICULTY_CHOICES,
-                                                        default=1)
+    difficulty_level = models.PositiveSmallIntegerField(choices=QUESTION_DIFFICULTY_CHOICES, default=1)
     is_private = models.BooleanField(default=False)
     statement = models.TextField()
     title = models.CharField(max_length=100)
@@ -185,9 +182,8 @@ class Feedback(models.Model):
 
     proposed_solution = models.OneToOneField(ProposedSolution, on_delete=models.CASCADE,
                                              primary_key=True)  # chave primária é o prório proposed_solution
-    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    evaluation = models.PositiveSmallIntegerField(choices=EVALUATION_TYPES,
-                                                  default=0)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    evaluation = models.PositiveSmallIntegerField(choices=EVALUATION_TYPES, default=0)
     feedback = models.TextField(blank=True, null=True)
     modified_date = models.DateTimeField(default=timezone.now)
 
@@ -213,5 +209,4 @@ class StudentModel(models.Model):
     total_tried_qst = models.PositiveIntegerField(default=0)
     extra_info = models.TextField(blank=True)
     updated_date = models.DateTimeField(default=timezone.now)
-    performance = models.PositiveSmallIntegerField(choices=PERFORMANCE_TYPES,
-                                                   default=0)
+    performance = models.PositiveSmallIntegerField(choices=PERFORMANCE_TYPES, default=0)

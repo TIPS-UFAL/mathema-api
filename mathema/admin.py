@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Curriculum, Topic, \
-    User, Group, StudentGroup
+from .models import Curriculum, Topic, Tag, Question, TopicCurriculum, Topic, QuestionTopic, ModelSolution, \
+    User, Group, StudentGroup, ProposedSolution, Feedback, StudentModel
 
 admin.site.register(User)
 admin.site.register(Curriculum)
