@@ -21,10 +21,17 @@ from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
+router.register(r'api/tag', views.Tag)
 router.register(r'api/curriculum', views.Curriculum)
-router.register(r'api/topic', views.Topic)
 router.register(r'api/group', views.Group)
 router.register(r'api/studentGroup', views.StudentGroup)  # Relacao many-to-many (User(Student) - Group)
+router.register(r'api/question', views.Question)
+router.register(r'api/topic', views.Topic)
+router.register(r'api/modelSolution', views.ModelSolution)
+router.register(r'api/proposedSolution', views.ProposedSolution)
+router.register(r'api/feedback', views.Feedback)
+router.register(r'api/StudentGroup', views.Feedback)
+
 # router.register(r'api/objective', views.Objective)  # Nao esta sendo implementada ainda
 # router.register(r'api/activity', views.Activity, base_name='activity')
 # router.register(r'api/support', views.Support, base_name='support')
@@ -36,6 +43,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'api/user/(?P<pk>[0-9]+)/$', views.UserNamePerPK.as_view({'get': 'retrieve'})),
     url(r'api/topic/list/(?P<pk_curriculum>[0-9]+)/$', views.Topic.as_view({'get': 'list'})),
+    url(r'api/question/list/(?P<pk_tag>[0-9]+)/$', views.Question.as_view({'get': 'list'})),
     url(r'api/studentGroup/(?P<pk_student>[0-9]+)/(?P<pk_group>[a-zA-Z0-9]+)/$', views.StudentGroup.as_view({'get': 'retrieve'})),
     # url(r'api/activity/list/(?P<pk_topic>[0-9]+)/$', views.Activity.as_view({'get': 'list'})),
     # url(r'api/support/list/(?P<pk_topic>[0-9]+)/$', views.Support.as_view({'get': 'list'})),
