@@ -5,6 +5,12 @@ from django.conf import settings
 from uuid import uuid4
 
 
+def random_value_generate():
+    aleatory_value = uuid4()
+    aleatory_value = aleatory_value.hex  # str value
+    return aleatory_value[0:8]  # length = 8
+
+
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
         (1, 'student'),
@@ -36,11 +42,6 @@ class Curriculum(models.Model):
 
 
 class Group(models.Model):
-    def random_value_generate(self):
-        aleatory_value = uuid4()
-        aleatory_value = aleatory_value.hex  # str value
-        return aleatory_value[0:8]  # length = 8
-
     group_key = models.CharField(max_length=8, default=random_value_generate, editable=False, primary_key=True)
     name = models.CharField(max_length=100)
     curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
