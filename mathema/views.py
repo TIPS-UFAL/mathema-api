@@ -9,7 +9,7 @@ from .models import Topic as TopicModel, TopicCurriculum as TCModel, \
 from .serializers import *
 from filters.mixins import (FiltersMixin, )
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsTeacher, IsOwnerOrReadOnly
+from .permissions import IsTeacher, IsOwnerOrReadOnly, IsOwner, IsOwnerOrTeacher
 
 """
     APIREST
@@ -136,10 +136,8 @@ class Question(FiltersMixin, viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsTeacher, IsAuthenticated]
-        elif self.action == 'update' or self.action == 'destroy':
-            permission_classes = [IsTeacher, IsOwnerOrReadOnly, IsAuthenticated]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
         return [permission() for permission in permission_classes]
 
@@ -158,6 +156,7 @@ class TopicCurriculum(FiltersMixin, viewsets.GenericViewSet,
                       mixins.DestroyModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.RetrieveModelMixin):
+    # Todo: se Topic já vier ordenado na sequência correta, não precisa dessa View
     """
         List all Topic, or create a new Topic.
         # api/topic/
@@ -170,10 +169,8 @@ class TopicCurriculum(FiltersMixin, viewsets.GenericViewSet,
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsTeacher, IsAuthenticated]
-        elif self.action == 'update' or self.action == 'destroy':
-            permission_classes = [IsTeacher, IsOwnerOrReadOnly, IsAuthenticated]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
         return [permission() for permission in permission_classes]
 
@@ -200,20 +197,10 @@ class Topic(viewsets.GenericViewSet,
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsTeacher, IsAuthenticated]
-        elif self.action == 'update' or self.action == 'destroy':
-            permission_classes = [IsTeacher, IsOwnerOrReadOnly, IsAuthenticated]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
         return [permission() for permission in permission_classes]
-
-
-"""
-    List all StudentGroup, or create a new StudentGroup.
-    # api/studentGroup/
-    Retrieve, update or delete a StudentGroup instance.
-    # api/studentGroup/:id_student/:id_group
-"""
 
 
 class ModelSolution(FiltersMixin, viewsets.GenericViewSet,
@@ -221,31 +208,27 @@ class ModelSolution(FiltersMixin, viewsets.GenericViewSet,
                     mixins.DestroyModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.RetrieveModelMixin):
+    """
+        List all StudentGroup, or create a new StudentGroup.
+        # api/studentGroup/
+        Retrieve, update or delete a StudentGroup instance.
+        # api/studentGroup/:id_student/:id_group
+    """
     queryset = MSModel.objects.all()
     serializer_class = ModelSolutionSerializer
 
-    def list(self, request):
-        queryset = MSModel.objects.filter()
+    def list(self, request, pk_question):
+        queryset = MSModel.objects.filter(question=pk_question)
         serializer = ModelSolutionSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsTeacher, IsAuthenticated]
-        elif self.action == 'update' or self.action == 'destroy':
-            permission_classes = [IsTeacher, IsOwnerOrReadOnly, IsAuthenticated]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
         return [permission() for permission in permission_classes]
-
-
-"""
-    List all StudentGroup, or create a new StudentGroup.
-    # api/studentGroup/
-    Retrieve, update or delete a StudentGroup instance.
-    # api/studentGroup/:id_student/:id_group
-"""
 
 
 class ProposedSolution(FiltersMixin, viewsets.GenericViewSet,
@@ -253,127 +236,66 @@ class ProposedSolution(FiltersMixin, viewsets.GenericViewSet,
                        mixins.DestroyModelMixin,
                        mixins.UpdateModelMixin,
                        mixins.RetrieveModelMixin):
+    """
+        List all StudentGroup, or create a new StudentGroup.
+        # api/studentGroup/
+        Retrieve, update or delete a StudentGroup instance.
+        # api/studentGroup/:id_student/:id_group
+    """
     queryset = PSModel.objects.all()
     serializer_class = ProposedSolutionSerializer
 
-    def list(self, request):
-        queryset = PSModel.objects.filter()
+    def list(self, request, pk_group, pk_question):
+        group = GroupModel.objects.get(id=pk_group)
+        queryset = PSModel.objects.filter(question=pk_question, author__in=group.students)
         serializer = ProposedSolutionSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_permissions(self):
-        if self.action == 'update' or self.action == 'destroy':
-            permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
-        else:
+        permission_classes = []
+        if self.action == 'create':
             permission_classes = [IsAuthenticated]
+        elif self.action == 'update' or self.action == 'destroy':
+            permission_classes = [IsOwner, IsAuthenticated]
+        elif self.action == 'retrieve':
+            permission_classes = [IsOwnerOrTeacher, IsAuthenticated]
+        elif self.action == 'list':
+            permission_classes = [IsTeacher, IsAuthenticated]
 
         return [permission() for permission in permission_classes]
 
 
-"""
-    List all StudentGroup, or create a new StudentGroup.
-    # api/studentGroup/
-    Retrieve, update or delete a StudentGroup instance.
-    # api/studentGroup/:id_student/:id_group
-"""
-
-
 class Feedback(FiltersMixin, viewsets.GenericViewSet,
-               mixins.CreateModelMixin,
-               mixins.DestroyModelMixin,
-               mixins.UpdateModelMixin,
-               mixins.RetrieveModelMixin):
+               mixins.UpdateModelMixin):
+    """
+        List all StudentGroup, or create a new StudentGroup.
+        # api/studentGroup/
+        Retrieve, update or delete a StudentGroup instance.
+        # api/studentGroup/:id_student/:id_group
+    """
     queryset = FeedbackModel.objects.all()
     serializer_class = FeedbackSerializer
-    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly,)
 
-    def list(self, request):
-        queryset = FeedbackModel.objects.filter()
-        serializer = FeedbackSerializer(queryset, many=True)
+    def retrieve(self, request, pk_psolution):
+        feedback = get_object_or_404(self.queryset, proposed_solution=pk_psolution)
+        serializer = FeedbackSerializer(feedback)
         return Response(serializer.data)
 
+    def get_permissions(self):
+        permission_classes = []
+        if self.action == 'update':
+            permission_classes = [IsTeacher, IsAuthenticated]
+        elif self.action == 'retrieve':
+            permission_classes = [IsOwnerOrTeacher, IsAuthenticated]
 
-"""
-    List all Objective, or create a new Objective.
-    # api/objective/
-    Retrieve, update or delete a Objective instance.
-    # api/objective/:id/
-"""
-# class Objective(FiltersMixin, viewsets.ModelViewSet):
-#     queryset = Objective.objects.all().order_by('-id')
-#     serializer_class = ObjectiveSerializer
-
-
-"""
-    List all Supports, or create a new support.
-    # api/support/
-    Retrieve, update or delete a support instance.
-    # api/support/:id/
-"""
-# class Support(viewsets.GenericViewSet,
-#                mixins.CreateModelMixin,
-#                mixins.DestroyModelMixin,
-#                mixins.UpdateModelMixin,
-#                mixins.RetrieveModelMixin):
-#
-#     queryset = SupportModel.objects.all()
-#     serializer_class = SupportSerializer
-#
-#     def list(self, request, pk_topic):
-#         queryset = SupportModel.objects.filter(topic=pk_topic)
-#         serializer = SupportSerializer(queryset, many=True)
-#         return Response(serializer.data)
-
-
-"""
-    List all Answers, or create a new Answer.
-    # api/answer/
-    Retrieve, update or delete a Answer instance.
-    # api/answer/:id/
-"""
-# class Answer(viewsets.GenericViewSet,
-#              mixins.CreateModelMixin,
-#              mixins.DestroyModelMixin,
-#              mixins.UpdateModelMixin,
-#              mixins.RetrieveModelMixin):
-#
-#     queryset = AnswerModel.objects.all()
-#     serializer_class = AnswerSerializer
-#
-#     def get_permissions(self):
-#         print(self)
-#         print(self.action)
-#         if self.action == 'list':
-#             permission_classes = [IsTeacher, IsAuthenticated]
-#         else:
-#             permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
-#
-#         return [permission() for permission in permission_classes]
-#
-#     def list(self, request, pk_activity):
-#         queryset = AnswerModel.objects.filter(activity=pk_activity).order_by('-id')
-#         serializer = AnswerSerializer(queryset, many=True)
-#         return Response(serializer.data)
-
-
-"""
-    Update and Retrieve a Evaluation instance
-    # api/evaluation/:id/
-"""
-# class Evaluation(viewsets.GenericViewSet,
-#                  mixins.UpdateModelMixin,
-#                  mixins.RetrieveModelMixin):
-#     queryset = EvaluationModel.objects.all()
-#     serializer_class = EvaluationSerializer
-
-
-"""
-    Retrieve a user instance
-    # api/user/:pk/
-"""
+        return [permission() for permission in permission_classes]
 
 
 class UserNamePerPK(viewsets.ViewSet):
+    """
+        Retrieve a user instance
+        # api/user/:pk/
+    """
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
